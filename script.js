@@ -1,50 +1,62 @@
 'use strict';
 
-let randomNum = parseInt(Math.random() * 100);  //замкнутая переменная
+let userOption;
 
-function isNum(num) {
-  return !isNaN(parseFloat(num)) && isFinite(num);
+const isNumber = function (num) {
+  return !isNaN(parseInt(num)) && isFinite(num) && num !== null;
 }
 
-function guessNum(serNum) {
-    
-function guess() {
-  let userNum = prompt('Угадай число от 1 до 100', ''); 
+const game = function() {
+  const randomNum = Math.round(Math.random() * 100);
+  let attempts = 10;
 
-  if (userNum === null) {
-    alert(`Игра окончена`);
-    } 
+  return function repeat() {
 
-  if (isNaN(userNum)) {
-    alert('Введи число!');
-  return guess(userNum)
+    if (attempts > 0) {
+
+      let userNumber = prompt('Угадай число от 1 до 100:');
+
+      if( isNumber(userNumber) ) {
+
+        if( userNumber < randomNum ) {
+          alert ('Загаданное число больше, осталось попыток: ' + --attempts)
+          repeat()
+        } else if ( userNumber > randomNum ) {
+          alert ('Загаданное число меньше, осталось попыток: ' + --attempts)
+          repeat()
+        } else {
+          userOption = confirm ('Поздравляю, Вы угадали!!! Хотите сыграть ещё?')
+        }
+
+      } else {
+        if( userNumber === null ) {
+          alert('Игра окончена')
+          userOption = false
+
+        } else {
+          alert ('Введите число!')
+          repeat ()
+        }
+        
+      }
+  
+    } else {
+      userOption = confirm ('Game over. Хотите сыграть ещё?')
     }
 
-  if (userNum === null) {
-  return
-    }
+  }
+}
 
-  if (!isNum(userNum)) {
-    userNum = +userNum;
-    }
-
-  else if (userNum > randomNum) {
-    alert('Загаданное число меньше');
-  return guess(userNum)
-    } 
-
-  else if (userNum < randomNum) {
-    alert('Загаданное число больше');
-  return guess(userNum)
+  const rightNumber = function () {
+    userOption = true
+      return function startGame() {
+        game()()
+        if(userOption) {
+          startGame()
+        } else {
+          alert('Вы вышли из игры успешно')
+        }
+      }
   }
 
-  else if (userNum !== Number) {               
-    alert('Поздравляю, Вы угадали!!!');
-  return
-  }
-     
-}
-  guess()
-}
-guessNum();
-console.log(randomNum);
+  rightNumber()()
